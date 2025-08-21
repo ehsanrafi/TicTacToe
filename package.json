@@ -1,7 +1,7 @@
 {
-  "name": "reversi",
+  "name": "tictactoe",
   "version": "1.0.0",
-  "description": "Reversi Game made by using Electron-JavaScript.",
+  "description": "TicTacToe Game made by using Node.js and Electron.",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ehsanrafi/Reversi.git"
+    "url": "git+https://github.com/ehsanrafi/TicTacToe.git"
   },
   "author": "ehsanrafi",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/ehsanrafi/Reversi/issues"
+    "url": "https://github.com/ehsanrafi/TicTacToe/issues"
   },
-  "homepage": "https://github.com/ehsanrafi/Reversi#readme",
+  "homepage": "https://github.com/ehsanrafi/TicTacToe#readme",
   "devDependencies": {
-    "electron": "^37.3.0"
+    "electron": "^37.3.1"
   }
 }

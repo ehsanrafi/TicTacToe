@@ -1,2 +1,2 @@
-# Reversi
-Reversi Game made by using Electron-JavaScript.
+# TicTacToe
+TicTacToe Game made by using Electron-JavaScript.
