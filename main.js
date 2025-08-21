@@ -17,8 +17,11 @@ function createWindow() {
     });
 }
 
-app.on('ready', createWindow);
+app.whenReady().then(() => {
+    createWindow()
+});
+
 app.on('window-all-closed', () => {
-    // Check whether it's not MacOS
-    if (process.platform != 'darwin') app.quit();
+    if (process.platform != 'darwin') // macOS
+        app.quit();
 });
