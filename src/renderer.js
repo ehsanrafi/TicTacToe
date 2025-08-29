@@ -7,6 +7,7 @@ let humanPlayer = "X"; // By default
 let aiPlayer = "O";
 let isHumanTurn = true;
 let cells = Array(9).fill(null);
+let gameActive = true;
 
 goFirst.addEventListener("click", () => startGame(true));
 goSecond.addEventListener("click", () => startGame(false));
@@ -16,6 +17,7 @@ function startGame(humanTurn) {
     humanPlayer = humanTurn ? "X" : "O";
     aiPlayer = humanTurn ? "O" : "X";
     isHumanTurn = humanTurn;
+    gameActive = true;
 
     renderBoard();
 
@@ -29,52 +31,61 @@ function renderBoard() {
     cells.forEach((cell, i) => {
         const btn = document.createElement("button");
         btn.textContent = cell || "";
-        btn.disabled = !!cell || !isHumanTurn;
+        btn.disabled = !!cell || !isHumanTurn || !gameActive;
         btn.onclick = () => makeMove(i);
         board.appendChild(btn);
     });
 }
 
 function makeMove(i) {
-    if (cells[i] || !isHumanTurn) return;
+    if (cells[i] || !isHumanTurn || !gameActive) return;
     
     cells[i] = humanPlayer;
     isHumanTurn = !isHumanTurn;
     renderBoard();
 
-    // if (!isGameOver) {
-    //     setTimeout(() => makeAIMove(), 1000);
-    // }
-    if (!isGameOver(cells)) {
+    const winner = checkWinner(cells);
+    if (winner) {
+        alert(winner === "draw" ? "It's a draw!" : `${winner} wins!`);
+        gameActive = false;
+    } else {
         makeAIMove();
     }
 }
 
 function makeAIMove() {
-    const AIMove = getBestMove(cells, aiPlayer, isHumanTurn);
+    if (!gameActive) return;
+
+    const AIMove = getBestMove(cells, aiPlayer);
     if (AIMove != -1) {
         cells[AIMove] = aiPlayer;
     }
 
     isHumanTurn = !isHumanTurn;
     renderBoard();
+
+    const winner = checkWinner(cells);
+    if (winner) {
+        alert(winner === "draw" ? "It's a draw!" : `${winner} wins!`);
+        gameActive = false;
+    }
 }
 
-function getBestMove(cells, aiPlayer, isHumanTurn) {
+function getBestMove(cells, aiPlayer) {
     let bestValue = -Infinity;
     let bestMove = -1;
 
     for (let i of moveOrder) {
         if (!cells[i]) {
             cells[i] = aiPlayer;
-
-            let value = minimaxAlphaBeta(cells, -Infinity, Infinity, 9, aiPlayer == "X" ? "O" : "X", false);
+            let value = minimaxAlphaBeta(cells, -Infinity, Infinity, 9, aiPlayer, false);
+            cells[i] = null;
+            
             if (value > bestValue) {
                 bestValue = value;
                 bestMove = i;
             }
 
-            cells[i] = null;
         }
     }
 
@@ -83,7 +94,7 @@ function getBestMove(cells, aiPlayer, isHumanTurn) {
 
 function minimaxAlphaBeta(cells, alpha, beta, depth, player, maxPlayer) {
     if (isGameOver(cells) || depth == 0) {
-        return getHeuristic(cells, player);
+        return getHeuristic(cells, aiPlayer);
     }
 
     let value = maxPlayer ? -Infinity : Infinity;
@@ -96,15 +107,15 @@ function minimaxAlphaBeta(cells, alpha, beta, depth, player, maxPlayer) {
             cells[i] = player;
 
             if (maxPlayer) {
-                value = Math.max(value, minimaxAlphaBeta(cells, alpha, beta, depth - 1, player == "X" ? "O" : "X", !maxPlayer));
+                value = Math.max(value, minimaxAlphaBeta(cells, alpha, beta, depth - 1, player == "X" ? "O" : "X", false));
+                cells[i] = null;
                 alpha = Math.max(alpha, value);
             }
             else {
-                value = Math.min(value, minimaxAlphaBeta(cells, alpha, beta, depth - 1, player == "X" ? "O" : "X", !maxPlayer));
+                value = Math.min(value, minimaxAlphaBeta(cells, alpha, beta, depth - 1, player == "X" ? "O" : "X", true));
+                cells[i] = null;
                 beta = Math.min(beta, value);
             }
-
-            cells[i] = null;
 
             if (beta <= alpha) {
                 break;
@@ -177,4 +188,25 @@ function isGameOver(cells) {
     }
 
     return true;
+}
+
+function checkWinner(cells) {
+    const winConditions = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],
+        [0, 4, 8], [2, 4, 6]
+    ];
+
+    for (const condition of winConditions) {
+        const [a, b, c] = condition;
+        if (cells[a] && cells[a] === cells[b] && cells[a] === cells[c]) {
+            return cells[a];
+        }
+    }
+
+    if (!cells.includes(null)) {
+        return "draw";
+    }
+
+    return null;
 }
