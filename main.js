@@ -4,13 +4,15 @@ let mainWindow;
 
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
+        // width,
+        // height,
+        // fullscreen: false,
         webPreferences: {
             nodeIntegration: true,
         },
     });
 
+    mainWindow.maximize();
     mainWindow.loadFile('index.html');
     mainWindow.on('closed', () => {
         mainWindow = null;
