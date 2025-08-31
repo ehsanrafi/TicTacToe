@@ -4,9 +4,6 @@ let mainWindow;
 
 function createWindow() {
     mainWindow = new BrowserWindow({
-        // width,
-        // height,
-        // fullscreen: false,
         webPreferences: {
             nodeIntegration: true,
         },
